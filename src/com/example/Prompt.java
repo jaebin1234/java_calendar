@@ -37,7 +37,7 @@ public class Prompt {
 
         int month = 1;
         int year = 2020;
-        int weekday = 0;
+
 
 
         while (true) {
@@ -60,12 +60,10 @@ public class Prompt {
                 continue; //month가 12이상이면 while문을 다시시작.
             }
 
-            System.out.println("첫째 날의 요일을 입력하세요(일요일,월요일,화요일,수요일,목요일,금요일.토요일) : ");
-            String str_weekday = sc.next();
-            weekday = parseDay(str_weekday);
 
 
-            cal.printCalendar_sample(year, month, weekday);//달력
+
+            cal.printCalendar_sample(year, month);//달력
             System.out.println(" " + month + "월은 " + cal.dayMethod(year, month) + "일까지 있습니다.");
             System.out.println();
 

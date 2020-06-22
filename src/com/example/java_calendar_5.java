@@ -22,10 +22,13 @@ import java.util.Scanner;
 
 public class java_calendar_5 {
 
-    public void printCalendar_sample(int year, int month, int weekday) {
+    public void printCalendar_sample(int year, int month) {
         System.out.println("  **** " + year + "년 " + month + "월 ****");
         System.out.println("  일 월 화  수  목 금 토");
         System.out.println("  --------------------");
+
+        //위크데이(요일) 자동으로 받기.
+        int weekday = getWeekDay(year, month, 1);
 
         //첫번째 줄에서 달력을 프린트 했을때 빈 공간
         for (int i = 0; i < weekday; i++) {
@@ -61,8 +64,45 @@ public class java_calendar_5 {
 
     }
 
-    private static final int[] MAX_DAYS = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-    private static final int[] LEAP_MAX_DAYS = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    private int getWeekDay(int year, int month, int day) {
+        int syear = 1970;
+
+        final int STANDARD_WEEKDAY = 4; //1970년 1월 1일이 목요일이기 떄문.
+
+        int count = 0;//1970년 1월1일 부터 하루 씩 카운팅하는 변수 count 초기화.
+
+        for (int i = syear; i < year; i++) {
+            int delta = isLeapYear(i) ? 366 : 365; //윤년이면 366일 ,아니면 365일 더함.
+            count += delta;
+        }
+
+
+        for (int i = 1; i < month; i++) { //dayMethod 함수 이용해서 달마다의 일수를 더함.
+            int delta = dayMethod(year, i);
+            count += delta;
+        }
+
+        count += day - 1; //마지막으로 그 달의 day를 더함 단,1월 1일은 더할 필요가 없음.
+
+        int weekday = (count + STANDARD_WEEKDAY) % 7; //카운팅한 일로 요일 구하기.
+
+        return weekday;
+    }
+
+    //test code
+    public static void main(String[] args) {
+        java_calendar_5 dua = new java_calendar_5();
+        System.out.println(dua.getWeekDay(1970, 1, 1)==3);
+        System.out.println(dua.getWeekDay(1970, 2, 1)==6);
+        System.out.println(dua.getWeekDay(1971, 1, 1)==4);
+        System.out.println(dua.getWeekDay(1972, 1, 1)==5);
+        System.out.println(dua.getWeekDay(1973, 1, 1)==0);
+
+
+    }
+
+    private static final int[] MAX_DAYS = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    private static final int[] LEAP_MAX_DAYS = {0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
     public boolean isLeapYear(int year) {
         if (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) {
@@ -75,9 +115,9 @@ public class java_calendar_5 {
 
     public int dayMethod(int year, int month) { // 각 월이 몇일까지 있는지
         if (isLeapYear(year)) {
-            return LEAP_MAX_DAYS[month - 1];
+            return LEAP_MAX_DAYS[month];
         } else {
-            return MAX_DAYS[month - 1];
+            return MAX_DAYS[month];
         }
     }
 
