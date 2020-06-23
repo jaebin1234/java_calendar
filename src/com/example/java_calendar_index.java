@@ -1,6 +1,10 @@
 package com.example;
 
-import java.util.Scanner;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+
 
 /* 2020년 1월달력
         System.out.println("   ****2020-01****");
@@ -20,7 +24,32 @@ import java.util.Scanner;
  * 프롬프트를 출력한다.
  * */
 
-public class java_calendar_5 {
+public class java_calendar_index {
+    private static final int[] MAX_DAYS = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    private static final int[] LEAP_MAX_DAYS = {0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+    private HashMap<Date, PlanItem> planMap; //키값인 날짜로 (String) plan찾기
+
+    public java_calendar_index() { //생성자가 제일 먼저 호출 됨. 생성자안에 새로운 해쉬 맵 planMap 만듬.
+        planMap = new HashMap<Date, PlanItem>();
+    }
+
+    /*
+     * @param date ex:"2017-06-20"
+     * @param plan
+     * @throws ParseException
+     * */
+    public void registerPlan(String strdate, String plan){ //plan 저장
+        PlanItem p =new PlanItem(strdate , plan);
+        planMap.put(p.getDate(), p);
+
+    }
+
+    public PlanItem searchPlan(String strdate) { //plan 가져오기
+        Date date = PlanItem.getDatefromString(strdate);
+        PlanItem plan = planMap.get(date);
+        return plan;
+    }
 
     public void printCalendar_sample(int year, int month) {
         System.out.println("  **** " + year + "년 " + month + "월 ****");
@@ -90,19 +119,19 @@ public class java_calendar_5 {
     }
 
     //test code
-    public static void main(String[] args) {
-        java_calendar_5 dua = new java_calendar_5();
-        System.out.println(dua.getWeekDay(1970, 1, 1)==3);
-        System.out.println(dua.getWeekDay(1970, 2, 1)==6);
-        System.out.println(dua.getWeekDay(1971, 1, 1)==4);
-        System.out.println(dua.getWeekDay(1972, 1, 1)==5);
-        System.out.println(dua.getWeekDay(1973, 1, 1)==0);
+    public static void main(String[] args) throws ParseException {
+        java_calendar_index cal = new java_calendar_index();
+        System.out.println(cal.getWeekDay(1970, 1, 1) == 4);
+        System.out.println(cal.getWeekDay(1971, 1, 1) == 5);
+        System.out.println(cal.getWeekDay(1972, 1, 1) == 6);
+        System.out.println(cal.getWeekDay(1973, 1, 1) == 1);
+        System.out.println(cal.getWeekDay(1974, 1, 1) == 2);
 
+        cal.registerPlan("2017-06-23", "Meal");
+        System.out.println(cal.searchPlan("2017-06-23").equals("Meal"));
 
     }
 
-    private static final int[] MAX_DAYS = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-    private static final int[] LEAP_MAX_DAYS = {0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
     public boolean isLeapYear(int year) {
         if (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) {
@@ -123,13 +152,3 @@ public class java_calendar_5 {
 
 
 }
-/* 2020년 1월달력
-        System.out.println(" ******2020-01******");
-        System.out.println(" 일 월 화  수  목 금 토");
-        System.out.println(" ---------------------");
-        System.out.println(" -  -  -  1  2  3  4");
-        System.out.println(" 5  6  7  8  9  10 11");
-        System.out.println(" 12 13 14 15 16 17 18");
-        System.out.println(" 19 20 21 22 23 24 25");
-        System.out.println(" 26 27 28 29 30 31");
- */

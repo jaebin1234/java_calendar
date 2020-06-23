@@ -1,5 +1,6 @@
 package com.example;
 
+import java.text.ParseException;
 import java.util.Scanner;
 /*
  * 월을 입력하면 해당월의 달력을 출력한다.
@@ -10,74 +11,148 @@ import java.util.Scanner;
  * */
 
 public class Prompt {
+
+    public void printMenu() {
+        System.out.println("+------------------------+");
+        System.out.println("| 1.일정등록");
+        System.out.println("| 2.일정검색");
+        System.out.println("| 3.달력보기");
+        System.out.println("| h.도움말");
+        System.out.println("| q.종료");
+        System.out.println("+------------------------+");
+
+
+    }
+
+
     public int parseDay(String week) {
-        if (week.equals("일요일")) { //문자열 비교는 equals
-            return 0;
-        } else if (week.equals("월요일")) {
-            return 1;
-        } else if (week.equals("화요일")) {
-            return 2;
-        } else if (week.equals("수요일")) {
-            return 3;
-        } else if (week.equals("목요일")) {
-            return 4;
-        } else if (week.equals("금요일")) {
-            return 5;
-        } else if (week.equals("토요일")) {
-            return 6;
-        } else {
-            return 0;
+        switch (week) {
+            case "일요일":
+                return 0;
+            case "월요일":
+                return 1;
+            case "화요일":
+                return 2;
+            case "수요일":
+                return 3;
+            case "목요일":
+                return 4;
+            case "금요일":
+                return 5;
+            case "토요일":
+                return 6;
+            default:
+                return 0;
+
         }
     }
 
-    public void runPrompt() {
-        java_calendar_5 cal = new java_calendar_5(); //생성자로 객체 만들기
+    public void runPrompt() throws ParseException {
+        printMenu();
 
         Scanner sc = new Scanner(System.in);
+        java_calendar_index cal = new java_calendar_index(); //생성자로 객체 만들기
 
-        int month = 1;
-        int year = 2020;
+        boolean isloop = true;
+        while (isloop) {
+            System.out.println("명령 (1,2,3,h,q) ");
 
+            String cmd = sc.next();
 
-
-        while (true) {
-            System.out.println("입력 하고 싶은 년도를 입력 하시오(종료는 -1) : ");
-            System.out.print("YEAR> ");
-            year = sc.nextInt();
-            if (year == -1) {
-                break;
+            switch (cmd) {
+                case "1": {
+                    cmdRegister(sc, cal);
+                    break;
+                }
+                case "2": {
+                    cmdSearch(sc, cal);
+                    break;
+                }
+                case "3": {
+                    cmdCalendar(sc, cal);
+                    break;
+                }
+                case "h": {
+                    printMenu();
+                    break;
+                }
+                case "q": {
+                    isloop = false;
+                    break;
+                }
             }
-
-
-            System.out.println("입력 하고 싶은 월을 입력 하시오(종료는 -1) : ");
-            System.out.print("MONTH> ");
-            month = sc.nextInt();
-            if (month == -1) {
-                break;// month가 -1이면 이 while문을 빠져나와라.
-            }
-            if (month > 12 || month < 1) {
-                System.out.println("잘못된 입력입니다. 다시 입력해 주세요. ");
-                continue; //month가 12이상이면 while문을 다시시작.
-            }
-
-
-
-
-            cal.printCalendar_sample(year, month);//달력
-            System.out.println(" " + month + "월은 " + cal.dayMethod(year, month) + "일까지 있습니다.");
-            System.out.println();
 
         }
+
         System.out.println("달력 프로 그램이 종료 됩니다.");
         sc.close();
     }
 
 
-    public static void main(String[] args) {
+    private void cmdRegister(Scanner s, java_calendar_index c) throws ParseException {
+        System.out.println("[새 일정등록] ");
+        System.out.println("날짜를 입력해주세요.(yyyy-MM-dd)");
+        String date = s.next();
+        String text = "";
+        System.out.println("일정을 입력해 주세요. (문장 끝에 ;을 입력해주세요.)");
+        String word;
+        while (!(word = s.next()).endsWith(";")) {
+            text += word + " ";
+
+        }
+        word = word.replace(";", "");
+        text += word;
+        c.registerPlan(date, text);
+    }
+
+
+
+
+    private void cmdSearch(Scanner s, java_calendar_index c) {
+        System.out.println("[일정 검색]");
+        System.out.println("날짜를 입력해주세요.(yyyy-MM-dd)");
+        String date = s.next();
+        PlanItem plan = null;
+        plan = c.searchPlan(date);
+        if(plan != null){
+            System.out.println(plan.detail);
+        }else {
+            System.out.println("일정이 없습니다.");
+        }
+
+    }
+
+    private void cmdCalendar(Scanner s, java_calendar_index c) {
+        int month = 1;
+        int year = 2020;
+        System.out.println("입력 하고 싶은 년도를 입력 하시오(종료는 -1) : ");
+        System.out.print("YEAR> ");
+        year = s.nextInt();
+
+
+        System.out.println("입력 하고 싶은 월을 입력 하시오(종료는 -1) : ");
+        System.out.print("MONTH> ");
+        month = s.nextInt();
+
+        if (month > 12 || month < 1) {
+            System.out.println("잘못된 입력입니다. 다시 입력해 주세요. ");
+            return;
+        }
+
+        c.printCalendar_sample(year, month);//달력
+        System.out.println(" " + month + "월은 " + c.dayMethod(year, month) + "일까지 있습니다.");
+        System.out.println();
+    }
+
+
+    public static void main(String[] args) throws ParseException {
         //셀 실행
 
         Prompt p = new Prompt();
         p.runPrompt();
     }
+
+
+
 
 }
