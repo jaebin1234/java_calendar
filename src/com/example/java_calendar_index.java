@@ -33,14 +33,16 @@ public class java_calendar_index {
     private HashMap<Date, PlanItem> planMap; //키값인 날짜로 (String) plan찾기
 
     public java_calendar_index() { //생성자가 제일 먼저 호출 됨. 생성자안에 새로운 해쉬 맵 planMap 만듬.
+
         planMap = new HashMap<Date, PlanItem>();
-        File f = new File(SAVE_FILE);
-        if(!f.exists()){
+
+        File f = new File(SAVE_FILE);//생성자가 제일 먼저 호출되기 때문에 파일에 저장된 데이터를 불러오기 하는 기능을 생성자에다가 써줌.
+        if(!f.exists()){ //파일이 존재하지않다면
             return;
         }
-        try {
+        try { //FileReader로 읽지 않고 Scanner 사용.
             Scanner s = new Scanner(f);
-            while(!s.hasNext()){
+            while(!s.hasNext()){ //hasNext는 스캐너가 읽을게 있다면
                 String line =s.nextLine();
                 String[] words = line.split(",");
                 String date = words[0];
@@ -66,7 +68,8 @@ public class java_calendar_index {
         File f = new File(SAVE_FILE);
         String item = p.saveString();
         try {
-            FileWriter fw = new FileWriter(f,true);
+            FileWriter fw = new FileWriter(f,true); //내가 입력해 준 문자열 등 정보를 파일에 저장시켜줌.
+            //위에 append를 사용하는 이유는 새로 저장할 때, 그 전것을 덮어써버리기 때문.
             fw.write(item);
             fw.close();
         } catch (IOException e) {
@@ -77,13 +80,13 @@ public class java_calendar_index {
 
     }
 
-    public PlanItem searchPlan(String strdate) { //plan 가져오기
+    public PlanItem searchPlan(String strdate) { //plan 검색하여 가져오기
         Date date = PlanItem.getDatefromString(strdate);
         PlanItem plan = planMap.get(date);
         return plan;
     }
 
-    public void printCalendar_sample(int year, int month) {
+    public void printCalendar_sample(int year, int month) { //캘린더의 년도 ,월을 입력하면 해당되는 월의 달력이 나오게함.
         System.out.println("  **** " + year + "년 " + month + "월 ****");
         System.out.println("  일 월 화  수  목 금 토");
         System.out.println("  --------------------");
@@ -125,7 +128,7 @@ public class java_calendar_index {
 
     }
 
-    private int getWeekDay(int year, int month, int day) {
+    private int getWeekDay(int year, int month, int day) { //달력 시작날의 요일을 계산하는 함수
         int syear = 1970;
 
         final int STANDARD_WEEKDAY = 4; //1970년 1월 1일이 목요일이기 떄문.
@@ -149,9 +152,8 @@ public class java_calendar_index {
 
         return weekday;
     }
-
-    //test code
-    public static void main(String[] args) throws ParseException {
+    
+    public static void main(String[] args) throws ParseException { //달력이 잘나오는 test code(main은 Prompt 클래스에있음.)
         java_calendar_index cal = new java_calendar_index();
         System.out.println(cal.getWeekDay(1970, 1, 1) == 4);
         System.out.println(cal.getWeekDay(1971, 1, 1) == 5);
@@ -165,7 +167,7 @@ public class java_calendar_index {
     }
 
 
-    public boolean isLeapYear(int year) {
+    public boolean isLeapYear(int year) { //윤년 계산 코드
         if (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) {
             return true;
         } else {
@@ -174,7 +176,7 @@ public class java_calendar_index {
 
     }
 
-    public int dayMethod(int year, int month) { // 각 월이 몇일까지 있는지
+    public int dayMethod(int year, int month) { // 윤년계산을 위한 각 월이 몇일까지 있는지 정보를 담음.
         if (isLeapYear(year)) {
             return LEAP_MAX_DAYS[month];
         } else {

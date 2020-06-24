@@ -35,6 +35,6 @@ public class PlanItem {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         String sdate = formatter.format(planDate);
 
-        return planDate.toString() + "," + "\"" +detail+ "\"" + "\n";
+        return planDate.toString() + "," + "\"" +detail+ "\"" + "\n"; //Date 클래스의 년도,날짜정보를 문자열로 바꿔줌.
     }
 }
