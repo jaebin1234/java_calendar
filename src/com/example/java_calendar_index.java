@@ -1,9 +1,11 @@
 package com.example;
 
+import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Scanner;
 
 
 /* 2020년 1월달력
@@ -27,11 +29,29 @@ import java.util.HashMap;
 public class java_calendar_index {
     private static final int[] MAX_DAYS = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     private static final int[] LEAP_MAX_DAYS = {0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-
+    private static final  String SAVE_FILE="calendar.dat";
     private HashMap<Date, PlanItem> planMap; //키값인 날짜로 (String) plan찾기
 
     public java_calendar_index() { //생성자가 제일 먼저 호출 됨. 생성자안에 새로운 해쉬 맵 planMap 만듬.
         planMap = new HashMap<Date, PlanItem>();
+        File f = new File(SAVE_FILE);
+        if(!f.exists()){
+            return;
+        }
+        try {
+            Scanner s = new Scanner(f);
+            while(!s.hasNext()){
+                String line =s.nextLine();
+                String[] words = line.split(",");
+                String date = words[0];
+                String detail = words[1].replaceAll("\"","");
+                PlanItem p = new PlanItem(date,detail);
+                planMap.put(p.getDate(),p);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
     }
 
     /*
@@ -40,8 +60,20 @@ public class java_calendar_index {
      * @throws ParseException
      * */
     public void registerPlan(String strdate, String plan){ //plan 저장
-        PlanItem p =new PlanItem(strdate , plan);
+        PlanItem p = new PlanItem(strdate , plan);
         planMap.put(p.getDate(), p);
+
+        File f = new File(SAVE_FILE);
+        String item = p.saveString();
+        try {
+            FileWriter fw = new FileWriter(f,true);
+            fw.write(item);
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
 
     }
 
